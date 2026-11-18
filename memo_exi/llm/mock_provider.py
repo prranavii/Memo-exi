@@ -202,9 +202,26 @@ class MockLLMProvider(LLMProvider):
 
     def _heuristic_conflict_resolution(self, prompt: str) -> str:
         """Heuristic conflict analyzer."""
+        p_lower = prompt.lower()
+        opposing_pairs = [
+            ("vegetarian", "meat"), ("vegan", "steak"), ("vegetarian", "steak"),
+            ("mac", "windows"), ("remote", "in-office"), ("single", "married"),
+        ]
+        is_contra = any(
+            (a in p_lower and b in p_lower) for a, b in opposing_pairs
+        )
+        if is_contra:
+            return json.dumps({
+                "is_contradiction": True,
+                "is_legitimate_update": False,
+                "requires_clarification": True,
+                "clarification_question": None,
+                "explanation": "Detected opposing traits without explicit transition cue.",
+            })
+
         return json.dumps({
             "is_contradiction": False,
-            "is_valid_update": True,
+            "is_legitimate_update": True,
             "requires_clarification": False,
             "explanation": "Heuristic resolution: detected regular fact update.",
         })
