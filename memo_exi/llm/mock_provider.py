@@ -30,17 +30,17 @@ class MockLLMProvider(LLMProvider):
         prompt_lower = prompt.lower()
         sys_lower = (system_prompt or "").lower()
 
-        # 1. Fact Extraction request
-        if "extract" in sys_lower or "extract meaningful facts" in prompt_lower or "json_schema" in prompt_lower:
-            return self._heuristic_fact_extraction(prompt)
-
-        # 2. Query classification request
-        if "classify" in sys_lower or "query intent" in prompt_lower:
+        # 1. Query classification request
+        if "classifier" in sys_lower or "classification" in sys_lower or "query intent" in prompt_lower:
             return self._heuristic_query_classification(prompt)
 
-        # 3. Conflict resolution request
+        # 2. Conflict resolution request
         if "conflict" in sys_lower or "contradiction" in prompt_lower:
             return self._heuristic_conflict_resolution(prompt)
+
+        # 3. Fact Extraction request
+        if "extract" in sys_lower or "extract meaningful facts" in prompt_lower or "json_schema" in prompt_lower:
+            return self._heuristic_fact_extraction(prompt)
 
         # 4. Response generation
         return self._heuristic_response_generation(prompt)
